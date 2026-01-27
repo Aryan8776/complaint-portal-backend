@@ -3,12 +3,14 @@ const multer = require("multer");
 const path = require("path");
 
 const protect = require("../middleware/authMiddleware");
+
 const {
   createComplaint,
-  getMyComplaints
+  getAllComplaints,
+  updateStatus
 } = require("../controllers/complaintController");
 
-// storage config
+// multer storage
 const storage = multer.diskStorage({
   destination: "uploads/",
   filename: (req, file, cb) =>
@@ -17,9 +19,13 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage });
 
-// IMPORTANT: upload.single("image")
+// USER create
 router.post("/", protect, upload.single("image"), createComplaint);
 
-router.get("/my", protect, getMyComplaints);
+// ADMIN list
+router.get("/", protect, getAllComplaints);
+
+// ADMIN update
+router.put("/:id", protect, updateStatus);
 
 module.exports = router;
