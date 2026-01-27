@@ -483,8 +483,8 @@ document
       document.getElementById("ph-pass").value;
 
     const url = isSignupMode
-      ? "hhttps://mycityconnect-dgxu.onrender.com/api/auth/register"
-      : "hhttps://mycityconnect-dgxu.onrender.com/api/auth/login";
+      ? "https://mycityconnect-dgxu.onrender.com/api/auth/register"
+      : "https://mycityconnect-dgxu.onrender.com/api/auth/login";
 
     const body = isSignupMode
       ? { name, email, password }
@@ -520,7 +520,7 @@ document
       document.getElementById("ph-admin-pass").value;
 
     const res = await fetch(
-      "hhttps://mycityconnect-dgxu.onrender.com/api/auth/admin-login",
+      "https://mycityconnect-dgxu.onrender.com/api/auth/admin-login",
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },

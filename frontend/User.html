@@ -537,7 +537,7 @@ async function loadUser(){
 try{
 
 const res = await fetch(
-"hhttps://mycityconnect-dgxu.onrender.com/api/auth/me",
+"https://mycityconnect-dgxu.onrender.com/api/auth/me",
 {
 headers:{ Authorization:"Bearer "+token }
 }
@@ -632,7 +632,7 @@ if(fileUpload.files[0])
 fd.append("image",fileUpload.files[0]);
 
 const res = await fetch(
-"hhttps://mycityconnect-dgxu.onrender.com/api/complaint",
+"https://mycityconnect-dgxu.onrender.com/api/complaint",
 {
 method:"POST",
 headers:{
@@ -666,7 +666,7 @@ async function loadMyComplaints(){
 try{
 
 const res=await fetch(
-"hhttps://mycityconnect-dgxu.onrender.com/api/complaint/my",
+"https://mycityconnect-dgxu.onrender.com/api/complaint/my",
 {
 headers:{Authorization:"Bearer "+token}
 }
