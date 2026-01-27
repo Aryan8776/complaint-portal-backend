@@ -1,3 +1,4 @@
+const Admin = require("../models/Admin");
 const User = require("../models/User");
 const bcrypt = require("bcryptjs");
 const generateToken = require("../utils/generateToken");
@@ -37,4 +38,35 @@ exports.loginUser = async (req, res) => {
     token: generateToken(user._id),
     role: user.role
   });
+};
+
+
+exports.adminLogin = async (req, res) => {
+  try {
+    const { adminId, password } = req.body;
+
+    const admin = await Admin.findOne({ adminId });
+
+    if (!admin) {
+      return res.status(401).json({ message: "Invalid admin credentials" });
+    }
+
+    // Plain text comparison (because admins collection stores plain passwords)
+    if (admin.password !== password) {
+      return res.status(401).json({ message: "Invalid admin credentials" });
+    }
+
+    const token = generateToken(admin._id);
+
+    res.json({
+      token,
+      role: "admin"
+    });
+
+  } catch (err) {
+    console.error("ADMIN LOGIN ERROR:", err);
+    res.status(500).json({
+      message: "Admin login failed"
+    });
+  }
 };

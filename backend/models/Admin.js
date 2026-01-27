@@ -1,8 +1,16 @@
 const mongoose = require("mongoose");
 
 const adminSchema = new mongoose.Schema({
-  adminId: String,
-  password: String
+  adminId: {
+    type: String,
+    required: true,
+    unique: true
+  },
+  password: {
+    type: String,
+    required: true
+  }
 });
 
-module.exports = mongoose.model("Admin", adminSchema);
+// IMPORTANT: this must match collection name "admins"
+module.exports = mongoose.model("Admin", adminSchema, "admins");
