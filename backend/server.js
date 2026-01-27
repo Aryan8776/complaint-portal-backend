@@ -16,7 +16,7 @@ mongoose.connect(process.env.MONGO_URI)
 .catch(err => console.log(err));
 
 app.use("/api/auth", require("./routes/authRoutes"));
-app.use("https://mycityconnect.onrender.com/api/complaint", require("./routes/complaintRoutes"));
+app.use("/api/complaint", require("./routes/complaintRoutes"));
 app.use("/api/admin", require("./routes/adminRoutes"));
 
 app.listen(process.env.PORT, () =>
