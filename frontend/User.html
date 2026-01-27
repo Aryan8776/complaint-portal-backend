@@ -632,7 +632,7 @@ if(fileUpload.files[0])
 fd.append("image",fileUpload.files[0]);
 
 const res = await fetch(
-"http://localhost:5000/api/complaint",
+"https://mycityconnect.onrender.com/api/complaint",
 {
 method:"POST",
 headers:{
@@ -666,7 +666,7 @@ async function loadMyComplaints(){
 try{
 
 const res=await fetch(
-"http://localhost:5000/api/complaint/my",
+"https://mycityconnect.onrender.com/api/complaint/my",
 {
 headers:{Authorization:"Bearer "+token}
 }
