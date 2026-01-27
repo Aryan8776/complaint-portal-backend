@@ -1,0 +1,400 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Complaint Dashboard</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+
+:root {
+--admin-primary:#2c3e50;
+--admin-dark:#1a252f;
+--accent-green:#27ae60;
+--accent-red:#c0392b;
+--white:#fff;
+--bg-gray:#e9ecef;
+--text-dark:#2d3436;
+--text-light:#636e72;
+--shadow-card:0 4px 20px rgba(0,0,0,0.05);
+--radius:12px;
+--transition:0.3s ease;
+}
+
+*{margin:0;padding:0;box-sizing:border-box;font-family:Poppins}
+
+body{
+background:var(--bg-gray);
+height:100vh;
+display:flex;
+overflow:hidden;
+}
+
+/* ---------------- SIDEBAR ---------------- */
+
+aside{
+width:260px;
+background:var(--admin-primary);
+padding:30px 20px;
+color:white;
+display:flex;
+flex-direction:column;
+}
+
+.brand{font-size:20px;font-weight:700;margin-bottom:40px}
+
+.nav-item{
+padding:15px;
+border-radius:8px;
+cursor:pointer;
+color:#bdc3c7;
+margin-bottom:8px;
+}
+
+.nav-item:hover,.nav-item.active{
+background:rgba(255,255,255,0.15);
+color:white;
+}
+
+.admin-profile{
+margin-top:auto;
+display:flex;
+gap:10px;
+border-top:1px solid rgba(255,255,255,0.2);
+padding-top:20px;
+}
+
+.avatar{
+width:40px;
+height:40px;
+border-radius:50%;
+background:white;
+color:#2c3e50;
+display:flex;
+align-items:center;
+justify-content:center;
+font-weight:bold;
+}
+
+/* ---------------- MAIN ---------------- */
+
+main{
+flex:1;
+padding:30px;
+overflow-y:auto;
+}
+
+.stats-grid{
+display:grid;
+grid-template-columns:repeat(2,1fr);
+gap:20px;
+margin-bottom:30px;
+}
+
+.stat-card{
+background:white;
+padding:25px;
+border-radius:12px;
+box-shadow:var(--shadow-card);
+display:flex;
+justify-content:space-between;
+}
+
+.table-container{
+background:white;
+border-radius:12px;
+box-shadow:var(--shadow-card);
+padding:20px;
+}
+
+/* ---------------- TABLE ---------------- */
+
+table{width:100%;border-collapse:collapse;margin-top:15px}
+
+th,td{
+padding:15px;
+border-bottom:1px solid #ddd;
+font-size:14px;
+}
+
+.badge{
+padding:6px 14px;
+border-radius:20px;
+font-size:11px;
+font-weight:600;
+text-transform:uppercase;
+}
+
+.badge-approved{background:#d4edda;color:#155724}
+.badge-rejected{background:#f8d7da;color:#721c24}
+.badge-pending{background:#fff3cd;color:#856404}
+
+/* ---------------- BUTTONS ---------------- */
+
+.action-btn{
+padding:8px 16px;
+border-radius:6px;
+border:none;
+cursor:pointer;
+font-size:12px;
+margin-right:5px;
+transition:.2s;
+}
+
+.btn-view{background:#eee}
+.btn-approve{background:var(--accent-green);color:white}
+.btn-reject{background:var(--accent-red);color:white}
+
+.btn-approve:hover{background:#219150}
+.btn-reject:hover{background:#a93226}
+
+/* FREEZE */
+
+.processed .btn-approve,
+.processed .btn-reject{
+opacity:.45;
+pointer-events:none;
+}
+
+/* DETAILS */
+
+.detail-row{display:none;background:#f8f9fa}
+.detail-row.active{display:table-row}
+
+.detail-content{
+padding:20px;
+display:grid;
+grid-template-columns:200px 1fr;
+gap:20px;
+}
+
+.complaint-img{
+width:100%;
+height:150px;
+object-fit:cover;
+border-radius:8px;
+}
+
+/* ---------------- */
+
+</style>
+</head>
+
+<body>
+
+<aside>
+<div class="brand">🛡️ Admin Portal</div>
+
+<ul>
+<li class="nav-item active">Dashboard</li>
+<li class="nav-item">Manage Complaints</li>
+<li class="nav-item">Settings</li>
+<li class="nav-item" onclick="logoutUser()" style="color:red">🚪 Logout</li>
+</ul>
+
+<div class="admin-profile">
+<div class="avatar">A</div>
+<div>
+<div style="font-weight:600">System Admin</div>
+<div style="font-size:12px;color:#ccc">Municipal Corp.</div>
+</div>
+</div>
+</aside>
+
+<main>
+
+<h2>Dashboard Overview</h2>
+<p style="color:#777;margin-bottom:20px">Review and process complaints.</p>
+
+<div class="stats-grid">
+<div class="stat-card">
+<div>
+<h3 id="count-pending">0</h3>
+<p>Pending Reviews</p>
+</div>
+<span>⏳</span>
+</div>
+
+<div class="stat-card">
+<div>
+<h3 id="count-rejected">0</h3>
+<p>Rejected</p>
+</div>
+<span>🚫</span>
+</div>
+</div>
+
+<div class="table-container">
+<h3>Recent Complaints</h3>
+<table>
+<thead>
+<tr>
+<th>ID</th>
+<th>Department</th>
+<th>Area</th>
+<th>Date</th>
+<th>Status</th>
+<th>Actions</th>
+</tr>
+</thead>
+
+<tbody id="complaintTableBody"></tbody>
+
+</table>
+</div>
+
+</main>
+
+<script>
+
+/* ---------------- AUTH ---------------- */
+
+const token = localStorage.getItem("adminToken");
+
+if(!token){
+alert("Unauthorized");
+location.href="index.html";
+}
+
+/* ---------------- LOAD ---------------- */
+
+const tbody = document.getElementById("complaintTableBody");
+const pendingEl = document.getElementById("count-pending");
+const rejectedEl = document.getElementById("count-rejected");
+
+async function loadComplaints(){
+
+const res = await fetch("http://localhost:5000/api/admin/complaints",{
+headers:{Authorization:"Bearer "+token}
+});
+
+const data = await res.json();
+
+tbody.innerHTML="";
+
+let pending=0,rejected=0;
+
+data.forEach(c=>{
+
+if(c.status==="pending") pending++;
+if(c.status==="rejected") rejected++;
+
+const isProcessed = c.status !== "pending";
+
+const badgeClass =
+c.status==="approved" ? "badge-approved" :
+c.status==="rejected" ? "badge-rejected" :
+"badge-pending";
+
+const id = c._id;
+
+tbody.innerHTML += `
+
+<tr class="main-row ${isProcessed?"processed":""}" id="row-${id}">
+<td>${id.slice(-6)}</td>
+<td>${c.department}</td>
+<td>${c.area}</td>
+<td>${new Date(c.createdAt).toLocaleDateString()}</td>
+
+<td>
+<span class="badge ${badgeClass}">
+${c.status}
+</span>
+</td>
+
+<td>
+
+<button class="action-btn btn-view"
+onclick="toggleDetails('${id}')">View Details</button>
+
+<button class="action-btn btn-approve"
+${isProcessed?"disabled":""}
+onclick="updateStatus('${id}','approved')">
+Approve</button>
+
+<button class="action-btn btn-reject"
+${isProcessed?"disabled":""}
+onclick="updateStatus('${id}','rejected')">
+Reject</button>
+
+</td>
+</tr>
+
+<tr class="detail-row" id="detail-${id}">
+<td colspan="6">
+
+<div class="detail-content">
+
+<img class="complaint-img"
+src="http://localhost:5000/uploads/${c.image || "noimg.png"}">
+
+<div>
+<p><b>Name:</b> ${c.name}</p>
+<p><b>Mobile:</b> ${c.mobile}</p>
+<p><b>Description:</b> ${c.description}</p>
+</div>
+
+</div>
+
+</td>
+</tr>
+
+`;
+
+});
+
+pendingEl.textContent=pending;
+rejectedEl.textContent=rejected;
+}
+
+/* ---------------- UPDATE ---------------- */
+
+async function updateStatus(id,status){
+
+const row=document.getElementById("row-"+id);
+
+row.classList.add("processed");
+
+row.querySelectorAll(".btn-approve,.btn-reject")
+.forEach(btn=>btn.disabled=true);
+
+await fetch("http://localhost:5000/api/admin/complaint/"+id,{
+method:"PUT",
+headers:{
+"Content-Type":"application/json",
+Authorization:"Bearer "+token
+},
+body:JSON.stringify({status})
+});
+
+loadComplaints();
+}
+
+/* ---------------- DETAILS ---------------- */
+
+function toggleDetails(id){
+
+const detail=document.getElementById("detail-"+id);
+
+document.querySelectorAll(".detail-row")
+.forEach(r=>r.classList.remove("active"));
+
+detail.classList.toggle("active");
+}
+
+/* ---------------- LOGOUT ---------------- */
+
+function logoutUser(){
+localStorage.removeItem("adminToken");
+alert("Logged out");
+location.href="index.html";
+}
+
+loadComplaints();
+
+</script>
+
+</body>
+</html>

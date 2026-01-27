@@ -1,0 +1,756 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Citizen Complaint Portal</title>
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+<style>
+  :root {
+            --user-primary: #4b6cb7;
+            --user-dark: #2f4a7d;
+            --user-gradient: linear-gradient(135deg, #5a7ecf, #2f4a7d);
+            
+            --white: #ffffff;
+            --off-white: #f8f9fa;
+            --bg-gray: #e9ecef;
+            --text-dark: #2d3436;
+            --text-light: #636e72;
+            
+            --shadow-card: 0 10px 20px rgba(0,0,0,0.05);
+            --shadow-hover: 0 15px 30px rgba(75, 108, 183, 0.15);
+            --radius: 15px;
+            --transition: 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background-color: var(--bg-gray);
+            color: var(--text-dark);
+            height: 100vh;
+            overflow: hidden; 
+            display: flex;
+        }
+
+       
+        aside {
+            width: 260px;
+            background: var(--white);
+            height: 100%;
+            padding: 30px 20px;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 2px 0 10px rgba(0,0,0,0.05);
+            z-index: 10;
+        }
+
+        .brand {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--user-primary);
+            margin-bottom: 40px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .nav-links {
+            list-style: none;
+        }
+
+        .nav-item {
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 10px;
+            cursor: pointer;
+            color: var(--text-light);
+            font-weight: 500;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .nav-item:hover, .nav-item.active {
+            background-color: #eff3ff;
+            color: var(--user-primary);
+        }
+
+        .user-profile {
+            margin-top: auto;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+        }
+
+        .avatar {
+            width: 40px;
+            height: 40px;
+            background: var(--user-gradient);
+            border-radius: 50%;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+     
+        main {
+            flex: 1;
+            padding: 30px;
+            overflow-y: auto; 
+            position: relative;
+        }
+
+      
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+
+        h2 {
+            font-weight: 600;
+            color: var(--text-dark);
+        }
+
+        .search-bar {
+            background: var(--white);
+            padding: 10px 20px;
+            border-radius: 30px;
+            box-shadow: var(--shadow-card);
+            width: 300px;
+            display: flex;
+            align-items: center;
+            transition: var(--transition);
+        }
+
+        .search-bar:focus-within {
+            box-shadow: 0 5px 15px rgba(75, 108, 183, 0.15);
+            transform: translateY(-2px);
+        }
+
+        .search-bar input {
+            border: none;
+            outline: none;
+            width: 100%;
+            margin-left: 10px;
+            color: var(--text-dark);
+            font-family: 'Poppins', sans-serif;
+        }
+
+ 
+        .section-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-light);
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 15px;
+        }
+
+        .dept-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        .dept-card {
+            background: var(--white);
+            padding: 25px;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow-card);
+            cursor: pointer;
+            transition: var(--transition);
+            border: 2px solid transparent;
+            text-align: center;
+        }
+
+        .dept-card:hover {
+            transform: translateY(-5px);
+            box-shadow: var(--shadow-hover);
+        }
+
+        .dept-card.selected {
+            border-color: var(--user-primary);
+            background-color: #f4f7ff;
+        }
+      
+        .hidden {
+            display: none !important;
+        }
+
+        .icon-box {
+            width: 50px;
+            height: 50px;
+            background: #eff3ff;
+            border-radius: 12px;
+            margin: 0 auto 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 24px;
+            color: var(--user-primary);
+        }
+
+        .dept-name {
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .form-wrapper {
+            background: var(--white);
+            padding: 40px;
+            border-radius: var(--radius);
+            box-shadow: var(--shadow-card);
+            max-width: 800px;
+            animation: slideUp 0.6s ease-out;
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+      
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+        }
+
+        .full-width {
+            grid-column: span 2;
+        }
+
+        .input-group {
+            position: relative;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text-light);
+        }
+
+        .input-field {
+            width: 100%;
+            padding: 12px 15px;
+            background: var(--off-white);
+            border: 1px solid transparent;
+            border-radius: 8px;
+            outline: none;
+            font-size: 14px;
+            transition: var(--transition);
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .input-field:focus {
+            background: var(--white);
+            border-color: var(--user-primary);
+            box-shadow: 0 0 0 3px rgba(75, 108, 183, 0.1);
+        }
+
+        textarea.input-field {
+            resize: none;
+            height: 100px;
+        }
+
+    
+        .upload-zone {
+            border: 2px dashed #cbd5e0;
+            border-radius: var(--radius);
+            padding: 30px;
+            text-align: center;
+            cursor: pointer;
+            transition: var(--transition);
+            background: var(--off-white);
+        }
+
+        .upload-zone:hover {
+            border-color: var(--user-primary);
+            background: #f4f7ff;
+        }
+
+        .upload-icon {
+            font-size: 30px;
+            color: var(--user-primary);
+            margin-bottom: 10px;
+        }
+
+        .upload-text {
+            font-size: 13px;
+            color: var(--text-light);
+        }
+
+
+        .btn-submit {
+            background: var(--user-gradient);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            border-radius: 30px;
+            font-weight: 600;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: var(--transition);
+            box-shadow: 0 4px 15px rgba(75, 108, 183, 0.3);
+            margin-top: 10px;
+            width: 100%;
+        }
+
+        .btn-submit:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(75, 108, 183, 0.4);
+        }
+        
+
+
+.bell-box{
+position:relative;
+cursor:pointer;
+font-size:22px;
+margin-left:18px;
+}
+
+.bell-count{
+position:absolute;
+top:-6px;
+right:-6px;
+background:red;
+color:white;
+font-size:10px;
+padding:2px 6px;
+border-radius:50%;
+display:none;
+}
+
+.notify-panel{
+position:absolute;
+right:0;
+top:45px;
+background:white;
+width:320px;
+border-radius:10px;
+box-shadow:0 10px 25px rgba(0,0,0,.15);
+display:none;
+z-index:1000;
+max-height:350px;
+overflow:auto;
+}
+
+.notify-item{
+padding:12px;
+border-bottom:1px solid #eee;
+font-size:13px;
+}
+
+.notify-item:last-child{border:none;}
+
+</style>
+</head>
+
+<body>
+
+<aside>
+<div class="brand">
+<span>🏛️ City Connect</span>
+</div>
+
+<ul class="nav-links">
+<li class="nav-item active">New Complaint</li>
+<li class="nav-item">My History</li>
+<li class="nav-item">Settings</li>
+<li class="nav-item" onclick="logoutUser()" style="color:red;">
+🚪 Logout
+</li>
+</ul>
+
+<div class="user-profile">
+<div class="avatar">U</div>
+<div class="user-info">
+<div id="usernameDisplay" style="font-size:14px;font-weight:600;">
+User
+</div>
+<div style="font-size:12px;color:var(--text-light);">Citizen</div>
+</div>
+</div>
+</aside>
+
+<main>
+
+<header>
+<div>
+<h2>Raise a Complaint</h2>
+<p style="color:var(--text-light);font-size:14px;">
+Select a department to get started.
+</p>
+</div>
+
+<div class="search-bar">
+<span>🔍</span>
+<input type="text" id="deptSearchInput"
+placeholder="Search departments...">
+</div>
+
+<div class="bell-box" onclick="toggleNotify()">
+🔔
+<span class="bell-count" id="bellCount">0</span>
+<div class="notify-panel" id="notifyPanel"></div>
+</div>
+
+</header>
+
+<p class="section-title">1. Select Department</p>
+
+<div class="dept-grid" id="deptGrid">
+<div class="dept-card" onclick="selectDept(this,'Sanitation')">
+<div class="icon-box">🗑️</div>
+<div class="dept-name">Sanitation & Waste</div>
+</div>
+
+<div class="dept-card" onclick="selectDept(this,'Roads')">
+<div class="icon-box">🚧</div>
+<div class="dept-name">Roads & Traffic</div>
+</div>
+
+<div class="dept-card" onclick="selectDept(this,'Water')">
+<div class="icon-box">💧</div>
+<div class="dept-name">Water Supply</div>
+</div>
+
+<div class="dept-card" onclick="selectDept(this,'Electricity')">
+<div class="icon-box">⚡</div>
+<div class="dept-name">Street Lights</div>
+</div>
+
+<div class="dept-card" onclick="selectDept(this,'Health')">
+<div class="icon-box">🏥</div>
+<div class="dept-name">Public Health</div>
+</div>
+</div>
+
+<div class="form-wrapper">
+
+<p class="section-title" style="margin-bottom:25px;">
+2. Complaint Details
+</p>
+
+<form id="complaintForm">
+
+<div class="form-grid">
+
+<div class="input-group">
+<label>Department Category</label>
+<input type="text" id="deptInput"
+class="input-field"
+placeholder="Select from above"
+readonly>
+</div>
+
+<div class="input-group">
+<label>Enter Area / Location</label>
+<input type="text" id="areaInput"
+class="input-field"
+placeholder="E.g., Sector 4, Main Market">
+</div>
+
+<div class="input-group full-width">
+<label>Upload Supporting Image</label>
+<div class="upload-zone"
+onclick="document.getElementById('fileUpload').click()">
+<div class="upload-icon">📷</div>
+<div class="upload-text">
+Click to upload or drag image here
+</div>
+<div style="font-size:11px;color:#999;margin-top:5px;">
+Supports JPG, PNG (Max 5MB)
+</div>
+<input type="file" id="fileUpload" hidden>
+</div>
+</div>
+
+<div class="input-group">
+<label>Complainant Name</label>
+<input type="text" id="nameInput"
+class="input-field"
+placeholder="Enter your full name">
+</div>
+
+<div class="input-group">
+<label>Mobile Number</label>
+<input type="tel" id="mobileInput"
+class="input-field"
+placeholder="+91 XXXXX XXXXX">
+</div>
+
+<div class="input-group full-width">
+<label>Complaint Description</label>
+<textarea id="descInput"
+class="input-field"
+placeholder="Describe the issue..."></textarea>
+</div>
+
+<div class="input-group full-width">
+<button type="submit"
+class="btn-submit">
+Register Complaint
+</button>
+</div>
+
+</div>
+</form>
+</div>
+
+</main>
+
+<script>
+
+
+const token = localStorage.getItem("token");
+
+if(!token){
+alert("Please login first");
+window.location.href="index.html";
+}
+
+
+
+async function loadUser(){
+
+try{
+
+const res = await fetch(
+"http://localhost:5000/api/auth/me",
+{
+headers:{ Authorization:"Bearer "+token }
+}
+);
+
+const data = await res.json();
+
+document.getElementById("usernameDisplay")
+.textContent = data.name;
+
+document.getElementById("nameInput").value = data.name;
+
+}catch{
+console.log("User fetch failed");
+}
+}
+
+loadUser();
+
+
+const searchInput =
+document.getElementById("deptSearchInput");
+
+const deptCards =
+document.querySelectorAll(".dept-card");
+
+searchInput.addEventListener("input",e=>{
+
+const term = e.target.value.toLowerCase();
+
+deptCards.forEach(card=>{
+
+const name =
+card.querySelector(".dept-name")
+.innerText.toLowerCase();
+
+card.classList.toggle(
+"hidden",
+!name.includes(term)
+);
+
+});
+
+});
+
+
+
+function selectDept(card,dept){
+
+document.querySelectorAll(".dept-card")
+.forEach(c=>c.classList.remove("selected"));
+
+card.classList.add("selected");
+
+const input =
+document.getElementById("deptInput");
+
+input.value = dept;
+
+input.scrollIntoView({behavior:"smooth"});
+
+}
+
+
+fileUpload.onchange = function(){
+
+if(this.files[0]){
+
+document.querySelector(".upload-text")
+.textContent =
+"Selected: "+this.files[0].name;
+
+}
+
+};
+
+
+document.getElementById("complaintForm")
+.addEventListener("submit",async e=>{
+
+e.preventDefault();
+
+const fd = new FormData();
+
+fd.append("department",deptInput.value);
+fd.append("area",areaInput.value);
+fd.append("name",nameInput.value);
+fd.append("mobile",mobileInput.value);
+fd.append("description",descInput.value);
+
+if(fileUpload.files[0])
+fd.append("image",fileUpload.files[0]);
+
+const res = await fetch(
+"http://localhost:5000/api/complaint",
+{
+method:"POST",
+headers:{
+Authorization:"Bearer "+token
+},
+body:fd
+}
+);
+
+await res.json();
+
+alert("Complaint Registered!");
+
+e.target.reset();
+
+document
+.querySelectorAll(".dept-card")
+.forEach(c=>c.classList.remove("selected"));
+
+document.querySelector(".upload-text")
+.textContent="Click to upload or drag image here";
+
+});
+
+
+
+let previousStatuses={};
+
+async function loadMyComplaints(){
+
+try{
+
+const res=await fetch(
+"http://localhost:5000/api/complaint/my",
+{
+headers:{Authorization:"Bearer "+token}
+}
+);
+
+const data=await res.json();
+
+console.log("MY COMPLAINTS:",data);  
+
+updateBellNotifications(data);
+
+
+data.forEach(c=>{
+
+if(!previousStatuses[c._id])
+previousStatuses[c._id]=c.status;
+
+if(previousStatuses[c._id]!==c.status){
+
+previousStatuses[c._id]=c.status;
+
+if(c.status==="approved")
+alert("✅ Your "+c.department+" complaint was approved");
+
+if(c.status==="rejected")
+alert("❌ Your "+c.department+" complaint was rejected");
+
+}
+
+});
+
+}catch(err){
+console.error("Bell Load Error:",err);
+}
+
+}
+
+
+loadMyComplaints();
+setInterval(loadMyComplaints,10000);
+
+
+
+function toggleNotify(){
+const panel=document.getElementById("notifyPanel");
+panel.style.display =
+panel.style.display==="block" ? "none" : "block";
+}
+
+function updateBellNotifications(data){
+
+const panel=document.getElementById("notifyPanel");
+const badge=document.getElementById("bellCount");
+
+panel.innerHTML="";
+let count=0;
+
+data.forEach(c=>{
+
+panel.innerHTML+=`
+<div class="notify-item">
+<strong>${c.department}</strong><br>
+Status: ${c.status}
+</div>
+`;
+
+if(c.status!=="pending") count++;
+});
+
+badge.textContent=count;
+badge.style.display=count?"block":"none";
+}
+
+function logoutUser(){
+
+localStorage.removeItem("token");
+
+alert("Logged out successfully");
+
+window.location.href = "index.html";
+
+}
+
+</script>
+
+</body>
+</html>
