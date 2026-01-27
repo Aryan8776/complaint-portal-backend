@@ -266,7 +266,7 @@ const rejectedEl = document.getElementById("count-rejected");
 
 async function loadComplaints(){
 
-const res = await fetch("https://mycityconnect.onrender.com/api/admin/complaints",{
+const res = await fetch("http://localhost:5000/api/admin/complaints",{
 headers:{Authorization:"Bearer "+token}
 });
 
@@ -328,7 +328,7 @@ Reject</button>
 <div class="detail-content">
 
 <img class="complaint-img"
-src="https://mycityconnect.onrender.com/uploads/${c.image || "noimg.png"}">
+src="http://localhost:5000/uploads/${c.image || "noimg.png"}">
 
 <div>
 <p><b>Name:</b> ${c.name}</p>
@@ -360,7 +360,7 @@ row.classList.add("processed");
 row.querySelectorAll(".btn-approve,.btn-reject")
 .forEach(btn=>btn.disabled=true);
 
-await fetch("https://mycityconnect.onrender.com/api/admin/complaint/"+id,{
+await fetch("http://localhost:5000/api/admin/complaint/"+id,{
 method:"PUT",
 headers:{
 "Content-Type":"application/json",

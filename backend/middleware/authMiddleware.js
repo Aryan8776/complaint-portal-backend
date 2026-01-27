@@ -1,20 +1,22 @@
 const jwt = require("jsonwebtoken");
+const User = require("../models/User");
 
-exports.verifyUser = (req, res, next) => {
-  const token = req.headers.authorization;
-  if (!token) return res.status(401).json({ msg: "No token" });
+module.exports = async (req, res, next) => {
+  let token = req.headers.authorization;
 
-  const decoded = jwt.verify(token, process.env.JWT_SECRET);
-  req.user = decoded;
-  next();
-};
+  if (token && token.startsWith("Bearer")) {
+    try {
+      token = token.split(" ")[1];
 
-exports.verifyAdmin = (req, res, next) => {
-  const token = req.headers.authorization;
-  if (!token) return res.status(401).json({ msg: "No token" });
+      const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-  const decoded = jwt.verify(token, process.env.JWT_SECRET);
-  if (!decoded.isAdmin) return res.status(403).json({ msg: "Admin only" });
+      req.user = await User.findById(decoded.id).select("-password");
 
-  next();
+      next();
+    } catch {
+      res.status(401).json({ message: "Not authorized" });
+    }
+  } else {
+    res.status(401).json({ message: "No token" });
+  }
 };
