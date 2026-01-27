@@ -534,7 +534,8 @@ document
       localStorage.setItem("adminToken", data.token);
       window.location.href = "Admin.html";
     } else {
-      alert(data.msg || "Unauthorized");
+     alert(data.message || data.msg || "Unauthorized");
+
     }
   });
 
