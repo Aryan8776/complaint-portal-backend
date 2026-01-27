@@ -642,9 +642,15 @@ body:fd
 }
 );
 
-await res.json();
+const data = await res.json();
+
+if (!res.ok) {
+  alert(data.message || "Complaint failed");
+  return;
+}
 
 alert("Complaint Registered!");
+
 
 e.target.reset();
 

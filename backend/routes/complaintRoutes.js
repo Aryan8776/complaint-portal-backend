@@ -1,14 +1,25 @@
 const router = require("express").Router();
-const {
-  createComplaint,
-  getAllComplaints,
-  updateStatus
-} = require("../controllers/complaintController");
+const multer = require("multer");
+const path = require("path");
 
 const protect = require("../middleware/authMiddleware");
+const {
+  createComplaint,
+  getMyComplaints
+} = require("../controllers/complaintController");
 
-router.post("/", protect, createComplaint);
-router.get("/", protect, getAllComplaints);
-router.put("/:id", protect, updateStatus);
+// storage config
+const storage = multer.diskStorage({
+  destination: "uploads/",
+  filename: (req, file, cb) =>
+    cb(null, Date.now() + path.extname(file.originalname))
+});
+
+const upload = multer({ storage });
+
+// IMPORTANT: upload.single("image")
+router.post("/", protect, upload.single("image"), createComplaint);
+
+router.get("/my", protect, getMyComplaints);
 
 module.exports = router;
