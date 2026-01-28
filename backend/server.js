@@ -11,27 +11,23 @@ const adminRoutes = require("./routes/adminRoutes");
 
 const app = express();
 
-// Connect DB
+
 connectDB();
 
-// Middleware
 app.use(cors());
 app.use(express.json());
 
-// Serve uploaded images
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
-// Routes
+
 app.use("/api/auth", authRoutes);
 
-// IMPORTANT — must match frontend:
 app.use("/api/complaint", complaintRoutes);
 
 app.use("/api/admin", adminRoutes);
 
-// Health check
 app.get("/", (req, res) => {
-  res.send("MyCityConnect Backend Running 🚀");
+  res.send("MyCityConnect  🚀");
 });
 
 const PORT = process.env.PORT || 5000;

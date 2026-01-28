@@ -363,20 +363,40 @@ font-size:13px;
 
 .notify-item:last-child{border:none;}
 
+.lang-box{
+position:fixed;
+top:15px;
+right:20px;
+z-index:999;
+}
+.lang-box select{
+padding:6px 14px;
+border-radius:20px;
+border:1px solid #ddd;
+font-weight:600;
+cursor:pointer;
+}
+
 </style>
 </head>
 
 <body>
 
-<aside>
-<div class="brand">
-<span>🏛️ City Connect</span>
+<div class="lang-box">
+<select id="languageSelect">
+<option value="en">English</option>
+<option value="hi">हिंदी</option>
+<option value="mr">मराठी</option>
+</select>
 </div>
 
+<aside>
+<div class="brand translatable">🏛️ City Connect</div>
+
 <ul class="nav-links">
-<li class="nav-item active">New Complaint</li>
-<li class="nav-item">My History</li>
-<li class="nav-item">Settings</li>
+<li class="nav-item active translatable">New Complaint</li>
+<li class="nav-item translatable">My History</li>
+<li class="nav-item translatable">Settings</li>
 <li class="nav-item" onclick="logoutUser()" style="color:red;">
 🚪 Logout
 </li>
@@ -388,7 +408,7 @@ font-size:13px;
 <div id="usernameDisplay" style="font-size:14px;font-weight:600;">
 User
 </div>
-<div style="font-size:12px;color:var(--text-light);">Citizen</div>
+<div class= "translatable" style="font-size:12px;color:var(--text-light);">Citizen</div>
 </div>
 </div>
 </aside>
@@ -397,8 +417,8 @@ User
 
 <header>
 <div>
-<h2>Raise a Complaint</h2>
-<p style="color:var(--text-light);font-size:14px;">
+<h2 class="translatable">Raise a Complaint</h2>
+<p class="translatable" style="color:var(--text-light);font-size:14px;">
 Select a department to get started.
 </p>
 </div>
@@ -417,38 +437,38 @@ placeholder="Search departments...">
 
 </header>
 
-<p class="section-title">1. Select Department</p>
+<p class="section-title translatable">1. Select Department</p>
 
 <div class="dept-grid" id="deptGrid">
 <div class="dept-card" onclick="selectDept(this,'Sanitation')">
 <div class="icon-box">🗑️</div>
-<div class="dept-name">Sanitation & Waste</div>
+<div class="dept-name translatable">Sanitation & Waste</div>
 </div>
 
 <div class="dept-card" onclick="selectDept(this,'Roads')">
 <div class="icon-box">🚧</div>
-<div class="dept-name">Roads & Traffic</div>
+<div class="dept-name translatable">Roads & Traffic</div>
 </div>
 
 <div class="dept-card" onclick="selectDept(this,'Water')">
 <div class="icon-box">💧</div>
-<div class="dept-name">Water Supply</div>
+<div class="dept-name translatable">Water Supply</div>
 </div>
 
 <div class="dept-card" onclick="selectDept(this,'Electricity')">
 <div class="icon-box">⚡</div>
-<div class="dept-name">Street Lights</div>
+<div class="dept-name translatable">Street Lights</div>
 </div>
 
 <div class="dept-card" onclick="selectDept(this,'Health')">
 <div class="icon-box">🏥</div>
-<div class="dept-name">Public Health</div>
+<div class="dept-name translatable">Public Health</div>
 </div>
 </div>
 
 <div class="form-wrapper">
 
-<p class="section-title" style="margin-bottom:25px;">
+<p class="section-title translatable" style="margin-bottom:25px;">
 2. Complaint Details
 </p>
 
@@ -457,7 +477,7 @@ placeholder="Search departments...">
 <div class="form-grid">
 
 <div class="input-group">
-<label>Department Category</label>
+<label class="translatable">Department Category</label>
 <input type="text" id="deptInput"
 class="input-field"
 placeholder="Select from above"
@@ -465,14 +485,14 @@ readonly>
 </div>
 
 <div class="input-group">
-<label>Enter Area / Location</label>
+<label class="translatable">Enter Area / Location</label>
 <input type="text" id="areaInput"
 class="input-field"
 placeholder="E.g., Sector 4, Main Market">
 </div>
 
 <div class="input-group full-width">
-<label>Upload Supporting Image</label>
+<label class="translatable">Upload Supporting Image</label>
 <div class="upload-zone"
 onclick="document.getElementById('fileUpload').click()">
 <div class="upload-icon">📷</div>
@@ -487,21 +507,21 @@ Supports JPG, PNG (Max 5MB)
 </div>
 
 <div class="input-group">
-<label>Complainant Name</label>
+<label class="translatable">Complainant Name</label>
 <input type="text" id="nameInput"
 class="input-field"
 placeholder="Enter your full name">
 </div>
 
 <div class="input-group">
-<label>Mobile Number</label>
+<label class="translatable">Mobile Number</label>
 <input type="tel" id="mobileInput"
 class="input-field"
 placeholder="+91 XXXXX XXXXX">
 </div>
 
 <div class="input-group full-width">
-<label>Complaint Description</label>
+<label class="translatable">Complaint Description</label>
 <textarea id="descInput"
 class="input-field"
 placeholder="Describe the issue..."></textarea>
@@ -509,7 +529,7 @@ placeholder="Describe the issue..."></textarea>
 
 <div class="input-group full-width">
 <button type="submit"
-class="btn-submit">
+class="btn-submit translatable">
 Register Complaint
 </button>
 </div>
@@ -521,7 +541,6 @@ Register Complaint
 </main>
 
 <script>
-
 
 const token = localStorage.getItem("token");
 
@@ -755,6 +774,65 @@ alert("Logged out successfully");
 window.location.href = "index.html";
 
 }
+
+
+document.addEventListener("DOMContentLoaded", () => {
+
+  const selector = document.getElementById("languageSelect");
+
+  async function translateText(text, target) {
+    try {
+      const url =
+        "https://translate.googleapis.com/translate_a/single" +
+        "?client=gtx" +
+        "&sl=en" +
+        "&tl=" + target +
+        "&dt=t&q=" + encodeURIComponent(text);
+
+      const res = await fetch(url);
+
+      if (!res.ok) throw new Error("Translate failed");
+
+      const data = await res.json();
+
+      return data[0][0][0];
+
+    } catch (err) {
+      console.error("Translate error:", err);
+      return text;
+    }
+  }
+
+  async function translatePage(lang) {
+
+    for (const el of document.querySelectorAll(".translatable")) {
+
+      const original =
+        el.dataset.original || el.innerText;
+
+      el.dataset.original = original;
+
+      el.innerText =
+        lang === "en"
+          ? original
+          : await translateText(original, lang);
+    }
+
+    localStorage.setItem("lang", lang);
+  }
+
+  /* LOAD SAVED */
+  const saved = localStorage.getItem("lang") || "en";
+  selector.value = saved;
+
+  if (saved !== "en") translatePage(saved);
+
+  selector.addEventListener("change", e => {
+    translatePage(e.target.value);
+  });
+
+}
+);
 
 </script>
 

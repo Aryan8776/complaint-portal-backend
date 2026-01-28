@@ -1,9 +1,6 @@
 const Complaint = require("../models/Complaint");
 
-/**
- * CREATE COMPLAINT (USER)
- * supports image upload via multer
- */
+
 exports.createComplaint = async (req, res) => {
   try {
     const {
@@ -41,9 +38,6 @@ exports.createComplaint = async (req, res) => {
 };
 
 
-/**
- * GET ALL COMPLAINTS (ADMIN)
- */
 exports.getAllComplaints = async (req, res) => {
   try {
     const complaints = await Complaint.find()
@@ -61,9 +55,7 @@ exports.getAllComplaints = async (req, res) => {
 };
 
 
-/**
- * UPDATE STATUS (ADMIN)
- */
+
 exports.updateStatus = async (req, res) => {
   try {
     const { status } = req.body;

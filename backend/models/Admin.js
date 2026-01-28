@@ -12,5 +12,5 @@ const adminSchema = new mongoose.Schema({
   }
 });
 
-// IMPORTANT: this must match collection name "admins"
+
 module.exports = mongoose.model("Admin", adminSchema, "admins");

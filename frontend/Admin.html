@@ -32,7 +32,7 @@ display:flex;
 overflow:hidden;
 }
 
-/* ---------------- SIDEBAR ---------------- */
+
 
 aside{
 width:260px;
@@ -177,12 +177,34 @@ object-fit:cover;
 border-radius:8px;
 }
 
-/* ---------------- */
+.lang-box{
+position:fixed;
+top:15px;
+right:25px;
+z-index:999;
+}
+
+.lang-box select{
+padding:6px 14px;
+border-radius:20px;
+border:1px solid #ddd;
+font-weight:600;
+cursor:pointer;
+}
+
 
 </style>
 </head>
 
 <body>
+
+<div class="lang-box">
+  <select id="languageSelect">
+    <option value="en">English</option>
+    <option value="hi">हिंदी</option>
+    <option value="mr">मराठी</option>
+  </select>
+</div>
 
 <aside>
 <div class="brand">🛡️ Admin Portal</div>
@@ -403,6 +425,83 @@ location.href="index.html";
 }
 
 loadComplaints();
+
+/* ================= GOOGLE TRANSLATE SYSTEM ================= */
+
+document.addEventListener("DOMContentLoaded", () => {
+
+  const selector = document.getElementById("languageSelect");
+
+  async function translateText(text, target) {
+    try {
+      const url =
+        "https://translate.googleapis.com/translate_a/single" +
+        "?client=gtx" +
+        "&sl=en" +
+        "&tl=" + target +
+        "&dt=t&q=" + encodeURIComponent(text);
+
+      const res = await fetch(url);
+      const data = await res.json();
+
+      return data[0][0][0];
+
+    } catch (err) {
+      console.error("Translate error:", err);
+      return text;
+    }
+  }
+
+  /* ===== TEXT ELEMENTS ===== */
+
+  const textSelectors = [
+    ".brand",
+    "main h2",
+    "main p",
+    ".stat-card p",
+    ".table-container h3",
+    ".nav-item",
+    ".admin-profile div div",
+    "th",
+    ".btn-view",
+    ".btn-approve",
+    ".btn-reject"
+  ];
+
+  async function translatePage(lang) {
+
+    const elements = document.querySelectorAll(
+      textSelectors.join(",")
+    );
+
+    for (const el of elements) {
+
+      const original =
+        el.dataset.original || el.innerText;
+
+      el.dataset.original = original;
+
+      el.innerText =
+        lang === "en"
+          ? original
+          : await translateText(original, lang);
+    }
+
+    localStorage.setItem("lang", lang);
+  }
+
+  /* ===== LOAD SAVED ===== */
+
+  const saved = localStorage.getItem("lang") || "en";
+  selector.value = saved;
+
+  if (saved !== "en") translatePage(saved);
+
+  selector.addEventListener("change", e => {
+    translatePage(e.target.value);
+  });
+
+});
 
 </script>
 

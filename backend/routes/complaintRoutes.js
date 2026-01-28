@@ -10,7 +10,7 @@ const {
   updateStatus
 } = require("../controllers/complaintController");
 
-// multer storage
+
 const storage = multer.diskStorage({
   destination: "uploads/",
   filename: (req, file, cb) =>
@@ -19,13 +19,13 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage });
 
-// USER create
+
 router.post("/", protect, upload.single("image"), createComplaint);
 
-// ADMIN list
+
 router.get("/", protect, getAllComplaints);
 
-// ADMIN update
+
 router.put("/:id", protect, updateStatus);
 
 module.exports = router;

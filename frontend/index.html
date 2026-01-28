@@ -539,88 +539,112 @@ document
     }
   });
 
+document.addEventListener("DOMContentLoaded", () => {
 
+  const selector = document.getElementById("languageSelect");
 
-const translations = {
-  en: {
-    userWelcome: "Welcome Back",
-    userSub: "Please enter your details to sign in.",
-    createAccount: "Create Account",
-    phName: "Full Name",
-    phEmail: "Email Address",
-    phPass: "Password",
-    btnSignIn: "Sign In",
-    btnSignUp: "Sign Up",
-    newHere: "New here?",
-    alreadyAccount: "Already have an account?",
-    createAccountLink: "Create an Account",
-    signInLink: "Sign In",
-    adminTitle: "Admin Portal",
-    adminSub:
-      "Secure access for authorized personnel only.",
-    phAdminId: "Admin ID",
-    phAdminPass: "Secure Password",
-    btnAccess: "Access Dashboard",
-    overlayUserTitle: "User Access",
-    overlayUserDesc:
-      "Return to the standard user login page.",
-    btnGoUser: "Go to User Login",
-    overlayAdminTitle: "Admin Access",
-    overlayAdminDesc:
-      "Restricted area. Please switch only if authorized.",
-    btnGoAdmin: "Go to Admin Portal"
-     },
-         hi: {
-          userWelcome: "स्वागत है",
-          userSub: "कृपया साइन इन करने के लिए अपना विवरण दर्ज करें।",
-                  createAccount: "खाता बनाएं",
-                  phName: "पूरा नाम",
-                  phEmail: "ईमेल पता",
-                  phPass: "पासवर्ड",
-                  btnSignIn: "साइन इन करें",
-                  btnSignUp: "साइन अप करें",
-                  newHere: "यहाँ नए हैं?",
-                  alreadyAccount: "क्या पहले से खाता है?",
-                  createAccountLink: "खाता बनाएं",
-                  signInLink: "साइन इन करें",
-                  adminTitle: "एडमिन पोर्टल",
-                  adminSub: "केवल अधिकृत कर्मियों के लिए सुरक्षित पहुंच।",
-                  phAdminId: "एडमिन आईडी",
-                  phAdminPass: "सुरक्षित पासवर्ड",
-                  btnAccess: "डैशबोर्ड एक्सेस करें",
-                  overlayUserTitle: "उपयोगकर्ता एक्सेस",
-                  overlayUserDesc: "मानक उपयोगकर्ता लॉगिन पृष्ठ पर लौटें।",
-                  btnGoUser: "लॉगिन पर जाएं",
-                  overlayAdminTitle: "एडमिन एक्सेस",
-                  overlayAdminDesc: "प्रतिबंधित क्षेत्र। केवल अधिकृत होने पर स्विच करें।",
-                  btnGoAdmin: "एडमिन पोर्टल पर जाएं"
-              },
-              mr: {
-                  userWelcome: "स्वागत आहे",
-                  userSub: "कृपया साइन इन करण्यासाठी आपले तपशील प्रविष्ट करा.",
-                  createAccount: "नवीन खाते तयार करा",
-                  phName: "पूर्ण नाव",
-                  phEmail: "ईमेल पत्ता",
-                  phPass: "पासवर्ड",
-                  btnSignIn: "साइन इन करा",
-                  btnSignUp: "साइन अप करा",
-                  newHere: "येथे नवीन आहात?",
-                  alreadyAccount: "आधीच खाते आहे का?",
-                  createAccountLink: "खाते तयार करा",
-                  signInLink: "साइन इन करा",
-                  adminTitle: "अडमिन पोर्टल",
-                  adminSub: "केवळ अधिकृत कर्मचाऱ्यांसाठी सुरक्षित प्रवेश.",
-                  phAdminId: "अडमिन आयडी",
-                  phAdminPass: "सुरक्षित पासवर्ड",
-                  btnAccess: "डॅशबोर्डमध्ये प्रवेश करा",
-                  overlayUserTitle: "वापरकर्ता प्रवेश",
-                  overlayUserDesc: "वापरकर्ता लॉगिन पृष्ठावर परत जा.",
-                  btnGoUser: "वापरकर्ता लॉगिन",
-                  overlayAdminTitle: "अडमिन प्रवेश",
-                  overlayAdminDesc: "प्रतिबंधित क्षेत्र. केवळ अधिकृत असल्यास स्विच करा.",
-                  btnGoAdmin: "अडमिन पोर्टलवर जा"
-}
-};
+  /* ===== GOOGLE FREE TRANSLATE ===== */
+
+  async function translateText(text, target) {
+    try {
+      const url =
+        "https://translate.googleapis.com/translate_a/single" +
+        "?client=gtx" +
+        "&sl=en" +
+        "&tl=" + target +
+        "&dt=t&q=" + encodeURIComponent(text);
+
+      const res = await fetch(url);
+      const data = await res.json();
+
+      return data[0][0][0];
+
+    } catch (err) {
+      console.error("Translate error:", err);
+      return text;
+    }
+  }
+
+  /* ===== ELEMENT LIST ===== */
+
+  const textIds = [
+    "txt-user-welcome",
+    "txt-user-sub",
+    "toggleText",
+    "toggleUserMode",
+
+    "txt-admin-title",
+    "txt-admin-sub",
+
+    "txt-overlay-user-title",
+    "txt-overlay-user-desc",
+    "signIn",
+
+    "txt-overlay-admin-title",
+    "txt-overlay-admin-desc",
+    "signUp",
+
+    "userFormBtn",
+    "btn-admin-access"
+  ];
+
+  const placeholderIds = [
+    "ph-fullname",
+    "ph-email",
+    "ph-pass",
+    "ph-admin-id",
+    "ph-admin-pass"
+  ];
+
+  /* ===== PAGE TRANSLATE ===== */
+
+  async function translatePage(lang) {
+
+    for (const id of textIds) {
+      const el = document.getElementById(id);
+      if (!el) continue;
+
+      const original =
+        el.dataset.original || el.innerText;
+
+      el.dataset.original = original;
+
+      el.innerText =
+        lang === "en"
+          ? original
+          : await translateText(original, lang);
+    }
+
+    for (const id of placeholderIds) {
+      const el = document.getElementById(id);
+      if (!el) continue;
+
+      const original =
+        el.dataset.original || el.placeholder;
+
+      el.dataset.original = original;
+
+      el.placeholder =
+        lang === "en"
+          ? original
+          : await translateText(original, lang);
+    }
+
+    localStorage.setItem("lang", lang);
+  }
+
+  /* ===== LOAD SAVED ===== */
+
+  const saved = localStorage.getItem("lang") || "en";
+  selector.value = saved;
+
+  if (saved !== "en") translatePage(saved);
+
+  selector.addEventListener("change", e => {
+    translatePage(e.target.value);
+  });
+
+});
 </script>
 
 </body>
