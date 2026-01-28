@@ -10,72 +10,76 @@
 <style>
 
 :root {
---admin-primary:#2c3e50;
---admin-dark:#1a252f;
---accent-green:#27ae60;
---accent-red:#c0392b;
---white:#fff;
---bg-gray:#e9ecef;
---text-dark:#2d3436;
---text-light:#636e72;
---shadow-card:0 4px 20px rgba(0,0,0,0.05);
---radius:12px;
---transition:0.3s ease;
+  --admin-primary: #2c3e50;
+    --white: #ffffff;
+    --bg-gray: #e9ecef;
+    --text-dark: #2d3436;
+    --text-light: #636e72;
+    --shadow-card: 0 4px 20px rgba(0,0,0,0.05);
+    --radius: 12px;
 }
 
 *{margin:0;padding:0;box-sizing:border-box;font-family:Poppins}
 
 body{
-background:var(--bg-gray);
-height:100vh;
-display:flex;
-overflow:hidden;
+height: 100vh;
+    display: flex;
+    overflow: hidden;
+    background: var(--bg-gray);
 }
 
 
 
 aside{
-width:260px;
-background:var(--admin-primary);
-padding:30px 20px;
-color:white;
-display:flex;
-flex-direction:column;
+width: 260px;
+    background: var(--admin-primary);
+    padding: 30px 20px;
+    display: flex;
+    flex-direction: column;
+    color: white;
+    box-shadow: 4px 0 15px rgba(0,0,0,0.1);
 }
 
 .brand{font-size:20px;font-weight:700;margin-bottom:40px}
 
 .nav-item{
-padding:15px;
-border-radius:8px;
-cursor:pointer;
-color:#bdc3c7;
-margin-bottom:8px;
+padding: 15px;
+    margin-bottom: 8px;
+    border-radius: 8px;
+    cursor: pointer;
+    color: #bdc3c7;
+    font-weight: 500;
+    font-size: 14px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    transition: 0.3s ease;
 }
 
 .nav-item:hover,.nav-item.active{
-background:rgba(255,255,255,0.15);
+background:rgba(255,255,255,0.1);
 color:white;
 }
 
 .admin-profile{
-margin-top:auto;
-display:flex;
-gap:10px;
-border-top:1px solid rgba(255,255,255,0.2);
-padding-top:20px;
+ margin-top: auto;
+    padding-top: 20px;
+    border-top: 1px solid rgba(255,255,255,0.15);
+    display: flex;
+    align-items: center;
+    gap: 10px;
 }
 
 .avatar{
-width:40px;
-height:40px;
-border-radius:50%;
-background:white;
-color:#2c3e50;
-display:flex;
-align-items:center;
-justify-content:center;
-font-weight:bold;
+width: 40px;
+    height: 40px;
+    background: white;
+    color: var(--admin-primary);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
 }
 
 /* ---------------- MAIN ---------------- */
@@ -108,6 +112,7 @@ border-radius:12px;
 box-shadow:var(--shadow-card);
 padding:20px;
 }
+
 
 /* ---------------- TABLE ---------------- */
 
@@ -212,15 +217,14 @@ cursor:pointer;
 <ul>
 <li class="nav-item active">Dashboard</li>
 <li class="nav-item">Manage Complaints</li>
-<li class="nav-item">Settings</li>
-<li class="nav-item" onclick="logoutUser()" style="color:red">🚪 Logout</li>
+<li class="nav-item" onclick="window.location.href='AdminSettings.html' ">Settings</li>
 </ul>
 
 <div class="admin-profile">
 <div class="avatar">A</div>
 <div>
-<div style="font-weight:600">System Admin</div>
-<div style="font-size:12px;color:#ccc">Municipal Corp.</div>
+<div style="font-size: 14px; font-weight: 600;">System Admin</div>
+<div style="font-size: 12px; color: #bdc3c7;">Municipal Corp.</div>
 </div>
 </div>
 </aside>

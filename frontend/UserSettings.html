@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Settings | CityConnect</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        /* --- THEME VARIABLES (Consistent with User.html) --- */
+        :root {
+            /* Light Mode (Default) */
+            --user-primary: #4b6cb7;
+            --user-dark: #2f4a7d;
+            --user-gradient: linear-gradient(135deg, #5a7ecf, #2f4a7d);
+            
+            --bg-body: #e9ecef;
+            --bg-card: #ffffff;
+            --bg-input: #f8f9fa;
+            
+            --text-main: #2d3436;
+            --text-muted: #636e72;
+            --border-color: #eee;
+            
+            --shadow-card: 0 10px 20px rgba(0,0,0,0.05);
+            --radius: 15px;
+            
+            /* Animation Variables */
+            --anim-speed: 0.4s;
+            --anim-curve: cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        /* Dark Mode Overrides */
+        [data-theme="dark"] {
+            --bg-body: #121212;
+            --bg-card: #1e1e1e;
+            --bg-input: #2d2d2d;
+            
+            --text-main: #e0e0e0;
+            --text-muted: #a0a0a0;
+            --border-color: #333;
+            
+            --shadow-card: 0 10px 20px rgba(0,0,0,0.3);
+        }
+
+        /* --- GLOBAL & ANIMATION --- */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        /* Smooth Transition for Font Size & Color Theme */
+        html, body {
+            transition: background-color var(--anim-speed) var(--anim-curve), 
+                        color var(--anim-speed) var(--anim-curve),
+                        font-size var(--anim-speed) var(--anim-curve);
+        }
+
+        body {
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+        }
+
+        /* Font Sizes (Applied via JS classes) */
+        body.size-small { font-size: 13px; }
+        body.size-medium { font-size: 16px; }
+        body.size-large { font-size: 19px; }
+
+        /* --- SIDEBAR --- */
+        aside {
+            width: 260px;
+            background: var(--bg-card);
+            height: 100%;
+            padding: 30px 20px;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 2px 0 10px rgba(0,0,0,0.05);
+            z-index: 10;
+            transition: background-color var(--anim-speed) ease;
+        }
+
+        .brand {
+            font-size: 1.25em; /* relative sizing */
+            font-weight: 700;
+            color: var(--user-primary);
+            margin-bottom: 40px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .nav-links { list-style: none; }
+
+        .nav-item {
+            padding: 15px;
+            margin-bottom: 10px;
+            border-radius: 10px;
+            cursor: pointer;
+            color: var(--text-light);
+            font-weight: 500;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+        .nav-item:hover, .nav-item.active {
+            background-color: #eff3ff;
+            color: var(--user-primary);
+        }
+        
+        [data-theme="dark"] .nav-item.active {
+            background-color: rgba(75, 108, 183, 0.2);
+        }
+
+        .user-profile {
+            margin-top: auto;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding-top: 20px;
+            border-top: 1px solid var(--border-color);
+        }
+
+        .avatar {
+            width: 40px;
+            height: 40px;
+            background: var(--user-gradient);
+            border-radius: 50%;
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 1rem;
+        }
+
+        /* --- MAIN CONTENT --- */
+        main {
+            flex: 1;
+            padding: 30px;
+            overflow-y: auto;
+        }
+
+        header { margin-bottom: 30px; }
+        h2 { font-weight: 600; font-size: 1.8em; margin-bottom: 5px; }
+        
+        /* CARD STYLES */
+        .card {
+            background: var(--bg-card);
+            border-radius: var(--radius);
+            padding: 30px;
+            box-shadow: var(--shadow-card);
+            max-width: 800px;
+            transition: background-color var(--anim-speed) ease;
+        }
+
+        /* SETTING ROW */
+        .setting-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 25px 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .setting-row:last-child { border-bottom: none; }
+
+        .setting-info h3 { font-size: 1.1em; margin-bottom: 5px; font-weight: 600; }
+        .setting-info p { font-size: 0.9em; color: var(--text-muted); }
+
+        /* CONTROLS */
+        select {
+            padding: 10px 15px;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            background: var(--bg-input);
+            color: var(--text-main);
+            outline: none;
+            cursor: pointer;
+            font-size: 0.9em;
+        }
+
+        /* FONT SIZE RADIO GROUP */
+        .size-group {
+            display: flex;
+            gap: 5px;
+            background: var(--bg-input);
+            padding: 5px;
+            border-radius: 10px;
+        }
+
+        .size-option {
+            padding: 8px 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.9em;
+            color: var(--text-muted);
+            transition: 0.2s;
+            user-select: none;
+        }
+
+        .size-option:hover { color: var(--user-primary); }
+
+        .size-option.selected {
+            background: var(--bg-card);
+            color: var(--user-primary);
+            font-weight: 600;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+
+        /* TOGGLE SWITCH */
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 26px;
+        }
+
+        .switch input { opacity: 0; width: 0; height: 0; }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 34px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider { background-color: var(--user-primary); }
+        input:checked + .slider:before { transform: translateX(24px); }
+
+        .lang-box{
+            position:fixed;
+            top:15px;
+            right:25px;
+            z-index:999;
+        }
+
+        .lang-box select{
+            padding:6px 14px;
+            border-radius:20px;
+            border:1px solid #ddd;
+            font-weight:600;
+            cursor:pointer;
+        }
+
+        .logout-btn{
+    background:#c0392b;
+    color:white;
+    border:none;
+    padding:10px 20px;
+    border-radius:8px;
+    cursor:pointer;
+    font-weight:600;
+    font-size:0.9em;
+    transition:.2s;
+}
+
+.logout-btn:hover{
+    background:#a93226;
+}
+
+    </style>
+</head>
+<body class="size-medium"> <aside>
+        <div class="brand">
+            <span>🏛️ City Connect</span>
+        </div>
+        
+        <ul class="nav-links">
+            <li class="nav-item" onclick="window.location.href='User.html'">New Complaint</li>
+            <li class="nav-item" onclick="window.location.href='My History.html'">My History</li>
+            <li class="nav-item active">Settings</li>
+        </ul>
+
+        <div class="user-profile" onclick="location.href='userprofile.html'">
+            <div class="avatar">U</div>
+            <div class="user-info">
+                <div style="font-size: 0.9em; font-weight: 600;">User Name</div>
+                <div style="font-size: 0.8em; color: var(--text-muted);">Citizen</div>
+            </div>
+        </div>
+    </aside>
+
+    <main>
+        <header>
+            <h2>Settings</h2>
+            <p style="color: var(--text-muted); font-size: 0.9em;">Customize your application experience.</p>
+        </header>
+
+        <div class="card">
+            
+            <div class="setting-row">
+                <div class="setting-info">
+                    <h3>🌐 Language</h3>
+                    <p>Select your preferred language.</p>
+                </div>
+                <select id="languageSelect">
+                    <option value="en">English</option>
+                    <option value="hi">Hindi</option>
+                    <option value="mr">Marathi</option>
+                </select>
+            </div>
+
+            <div class="setting-row">
+                <div class="setting-info">
+                    <h3>Aa Text Size</h3>
+                    <p>Adjust the application font size.</p>
+                </div>
+                <div class="size-group">
+                    <div class="size-option" onclick="setSize('small', this)">Small</div>
+                    <div class="size-option selected" onclick="setSize('medium', this)">Medium</div>
+                    <div class="size-option" onclick="setSize('large', this)">Large</div>
+                </div>
+            </div>
+
+            <div class="setting-row">
+                <div class="setting-info">
+                    <h3>🌙 Dark Mode</h3>
+                    <p>Switch between light and dark themes.</p>
+                </div>
+                <label class="switch">
+                    <input type="checkbox" id="themeToggle">
+                    <span class="slider"></span>
+                </label>
+            </div>
+
+            <div class="setting-row">
+             <div class="setting-info">
+                 <h3>🚪 Logout</h3>
+                 <p>Sign out from your account.</p>
+            </div>
+
+    <button class="logout-btn" onclick="logoutUser()">
+        Logout
+    </button>
+   </div>
+
+
+        </div>
+    </main>
+
+    <script>
+        // --- 1. LOAD SETTINGS FROM STORAGE ---
+        const savedTheme = localStorage.getItem('theme') || 'light';
+        const savedSize = localStorage.getItem('textSize') || 'medium';
+        const savedLang = localStorage.getItem('language') || 'en';
+
+        // Apply Theme
+        if (savedTheme === 'dark') {
+            document.documentElement.setAttribute('data-theme', 'dark');
+            document.getElementById('themeToggle').checked = true;
+        }
+
+        // Apply Size
+        document.body.className = `size-${savedSize}`;
+        updateSizeUI(savedSize);
+
+        // Apply Language
+        document.getElementById('languageSelect').value = savedLang;
+
+
+        // --- 2. DARK MODE LOGIC ---
+        document.getElementById('themeToggle').addEventListener('change', function(e) {
+            if(e.target.checked) {
+                document.documentElement.setAttribute('data-theme', 'dark');
+                localStorage.setItem('theme', 'dark');
+            } else {
+                document.documentElement.setAttribute('data-theme', 'light');
+                localStorage.setItem('theme', 'light');
+            }
+        });
+
+
+        // --- 3. TEXT SIZE LOGIC (With Animation) ---
+        function setSize(size, element) {
+            // Apply class to body (triggers CSS transition)
+            document.body.className = `size-${size}`;
+            
+            // Update UI State
+            document.querySelectorAll('.size-option').forEach(opt => opt.classList.remove('selected'));
+            element.classList.add('selected');
+
+            // Save
+            localStorage.setItem('textSize', size);
+        }
+
+        // Helper to set UI active state on load
+        function updateSizeUI(size) {
+            document.querySelectorAll('.size-option').forEach(opt => {
+                opt.classList.remove('selected');
+                if(opt.innerText.toLowerCase() === size) {
+                    opt.classList.add('selected');
+                }
+            });
+        }
+
+        // --- 4. LANGUAGE LOGIC ---
+        document.getElementById('languageSelect').addEventListener('change', function(e) {
+            localStorage.setItem('language', e.target.value);
+            // In a real app, this would trigger a translation reload
+            // alert('Language set to: ' + e.target.value);
+        });
+
+        document.addEventListener("DOMContentLoaded", () => {
+
+  const selector = document.getElementById("languageSelect");
+
+  async function translateText(text, target) {
+    try {
+      const url =
+        "https://translate.googleapis.com/translate_a/single" +
+        "?client=gtx" +
+        "&sl=en" +
+        "&tl=" + target +
+        "&dt=t&q=" + encodeURIComponent(text);
+
+      const res = await fetch(url);
+      const data = await res.json();
+
+      return data[0][0][0];
+
+    } catch (err) {
+      console.error("Translate error:", err);
+      return text;
+    }
+  }
+
+  /* ===== TEXT ELEMENTS ===== */
+
+  const textSelectors = [
+    ".brand",
+    "main h2",
+    "main p",
+    ".stat-card p",
+    ".table-container h3",
+    ".nav-item",
+    ".admin-profile div div",
+    "th",
+    ".btn-view",
+    ".btn-approve",
+    ".btn-reject"
+  ];
+
+  async function translatePage(lang) {
+
+    const elements = document.querySelectorAll(
+      textSelectors.join(",")
+    );
+
+    for (const el of elements) {
+
+      const original =
+        el.dataset.original || el.innerText;
+
+      el.dataset.original = original;
+
+      el.innerText =
+        lang === "en"
+          ? original
+          : await translateText(original, lang);
+    }
+
+    localStorage.setItem("lang", lang);
+  }
+
+  /* ===== LOAD SAVED ===== */
+
+  const saved = localStorage.getItem("lang") || "en";
+  selector.value = saved;
+
+  if (saved !== "en") translatePage(saved);
+
+  selector.addEventListener("change", e => {
+    translatePage(e.target.value);
+  });
+
+});
+
+    function logoutUser() {
+
+    if (!confirm("Are you sure you want to logout?")) return;
+
+    localStorage.removeItem("token");   // user auth
+    localStorage.removeItem("theme");
+    localStorage.removeItem("textSize");
+    localStorage.removeItem("language");
+
+    window.location.href = "index.html";
+}
+
+</script>
+</body>
+</html>

@@ -23,6 +23,21 @@
             --shadow-hover: 0 15px 30px rgba(75, 108, 183, 0.15);
             --radius: 15px;
             --transition: 0.3s ease;
+
+            --bg-card: #ffffff;
+            --bg-input: #f8f9fa;
+            
+            --text-main: #2d3436;
+            --text-muted: #636e72;
+            --border-color: #eee;
+            
+            --shadow-card: 0 10px 20px rgba(0,0,0,0.05);
+            --radius: 15px;
+            
+            /* Animation Variables */
+            --anim-speed: 0.4s;
+            --anim-curve: cubic-bezier(0.4, 0, 0.2, 1);
+
         }
 
         * {
@@ -31,6 +46,25 @@
             box-sizing: border-box;
             font-family: 'Poppins', sans-serif;
         }
+
+        /* ===== DARK MODE OVERRIDES ===== */
+[data-theme="dark"] {
+
+  --white: #1e1e1e;
+  --off-white: #2a2a2a;
+  --bg-gray: #121212;
+
+  --bg-card: #1e1e1e;
+  --bg-input: #2d2d2d;
+
+  --text-dark: #e0e0e0;
+  --text-light: #a0a0a0;
+
+  --border-color: #333;
+
+  --shadow-card: 0 10px 25px rgba(0,0,0,0.4);
+}
+
 
         body {
             background-color: var(--bg-gray);
@@ -53,7 +87,7 @@
         }
 
         .brand {
-            font-size: 20px;
+            font-size: 1.25em;
             font-weight: 700;
             color: var(--user-primary);
             margin-bottom: 40px;
@@ -80,7 +114,7 @@
         }
 
         .nav-item:hover, .nav-item.active {
-            background-color: #eff3ff;
+            background-color: var(--bg-input);
             color: var(--user-primary);
         }
 
@@ -90,7 +124,7 @@
             align-items: center;
             gap: 10px;
             padding-top: 20px;
-            border-top: 1px solid #eee;
+           border-top: 1px solid var(--border-color);
         }
 
         .avatar {
@@ -127,7 +161,7 @@
         }
 
         .search-bar {
-            background: var(--white);
+           background-color: var(--bg-input);
             padding: 10px 20px;
             border-radius: 30px;
             box-shadow: var(--shadow-card);
@@ -153,7 +187,7 @@
 
  
         .section-title {
-            font-size: 14px;
+            font-size: 0.85em;
             font-weight: 600;
             color: var(--text-light);
             text-transform: uppercase;
@@ -186,7 +220,7 @@
 
         .dept-card.selected {
             border-color: var(--user-primary);
-            background-color: #f4f7ff;
+            background-color: var(--off-white);
         }
       
         .hidden {
@@ -273,7 +307,7 @@
 
     
         .upload-zone {
-            border: 2px dashed #cbd5e0;
+            border: 2px dashed var(--border-color);
             border-radius: var(--radius);
             padding: 30px;
             text-align: center;
@@ -284,7 +318,7 @@
 
         .upload-zone:hover {
             border-color: var(--user-primary);
-            background: #f4f7ff;
+            background: var(--off-white);
         }
 
         .upload-icon {
@@ -345,7 +379,7 @@ display:none;
 position:absolute;
 right:0;
 top:45px;
-background:white;
+background: var(--bg-card);
 width:320px;
 border-radius:10px;
 box-shadow:0 10px 25px rgba(0,0,0,.15);
@@ -357,7 +391,7 @@ overflow:auto;
 
 .notify-item{
 padding:12px;
-border-bottom:1px solid #eee;
+border-bottom:1px solid var(--border-color);
 font-size:13px;
 }
 
@@ -371,11 +405,16 @@ z-index:999;
 }
 .lang-box select{
 padding:6px 14px;
-border-radius:20px;
-border:1px solid #ddd;
+border:1px solid var(--border-color);
 font-weight:600;
 cursor:pointer;
 }
+
+body.size-small { font-size: 13px; }
+body.size-medium { font-size: 16px; }
+body.size-large { font-size: 19px; }
+
+
 
 </style>
 </head>
@@ -396,19 +435,17 @@ cursor:pointer;
 <ul class="nav-links">
 <li class="nav-item active translatable">New Complaint</li>
 <li class="nav-item translatable">My History</li>
-<li class="nav-item translatable">Settings</li>
-<li class="nav-item" onclick="logoutUser()" style="color:red;">
-🚪 Logout
+<li class="nav-item translatable" onclick="window.location.href='UserSettings.html'">Settings</li>
+
 </li>
 </ul>
 
 <div class="user-profile">
 <div class="avatar">U</div>
 <div class="user-info">
-<div id="usernameDisplay" style="font-size:14px;font-weight:600;">
-User
-</div>
-<div class= "translatable" style="font-size:12px;color:var(--text-light);">Citizen</div>
+<div id="usernameDisplay" style="font-size: 0.9em; font-weight: 600;">
+User Name</div>
+<div class= "translatable" style="font-size: 0.8em; color: var(--text-muted);">Citizen</div>
 </div>
 </div>
 </aside>
@@ -549,6 +586,24 @@ alert("Please login first");
 window.location.href="index.html";
 }
 
+/* ===== APPLY SAVED THEME ===== */
+
+const savedTheme = localStorage.getItem("theme") || "light";
+
+if (savedTheme === "dark") {
+  document.documentElement.setAttribute("data-theme", "dark");
+}
+
+
+const savedSize = localStorage.getItem("textSize") || "medium";
+
+document.body.classList.remove(
+  "size-small",
+  "size-medium",
+  "size-large"
+);
+
+document.body.classList.add(`size-${savedSize}`);
 
 
 async function loadUser(){
@@ -763,16 +818,6 @@ if(c.status!=="pending") count++;
 
 badge.textContent=count;
 badge.style.display=count?"block":"none";
-}
-
-function logoutUser(){
-
-localStorage.removeItem("token");
-
-alert("Logged out successfully");
-
-window.location.href = "index.html";
-
 }
 
 
