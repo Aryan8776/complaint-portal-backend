@@ -8,6 +8,32 @@
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
 <style>
+@media (max-width: 768px) {
+
+  header {
+    padding: 1rem;
+    text-align: center;
+  }
+
+  .sidebar {
+    position: static;
+    width: 100%;
+  }
+
+  .content {
+    margin-left: 0;
+  }
+
+  h1 {
+    font-size: 1.8rem;
+  }
+
+  button {
+    width: 100%;
+  }
+
+}
+
 
 :root {
   --admin-primary: #2c3e50;
@@ -19,9 +45,14 @@
     --radius: 12px;
 }
 
-*{margin:0;padding:0;box-sizing:border-box;font-family:Poppins}
+*{margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Poppins}
 
 body{
+    font-family: 'Poppins', sans-serif;
+  overflow-x: hidden;
 height: 100vh;
     display: flex;
     overflow: hidden;
