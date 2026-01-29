@@ -1,517 +1,355 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Admin Complaint Dashboard</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Complaint Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --admin-primary: #2c3e50;
+            --white: #ffffff;
+            --bg-gray: #e9ecef;
+            --text-dark: #2d3436;
+            --text-light: #636e72;
+            --shadow-card: 0 4px 20px rgba(0,0,0,0.05);
+            --radius: 12px;
+            --accent-green: #27ae60;
+            --accent-red: #c0392b;
+            --card-bg: #ffffff;
+            --table-border: #ddd;
+        }
 
-<style>
+        /* DARK MODE OVERRIDES */
+        body.dark-theme {
+            --admin-primary: #1a252f;
+            --white: #1e1e1e;
+            --bg-gray: #121212;
+            --text-dark: #f5f6fa;
+            --text-light: #a4b0be;
+            --card-bg: #1e1e1e;
+            --shadow-card: 0 4px 20px rgba(0,0,0,0.4);
+            --table-border: #333;
+        }
 
-:root {
-  --admin-primary: #2c3e50;
-    --white: #ffffff;
-    --bg-gray: #e9ecef;
-    --text-dark: #2d3436;
-    --text-light: #636e72;
-    --shadow-card: 0 4px 20px rgba(0,0,0,0.05);
-    --radius: 12px;
-}
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
 
-*{margin:0;
-    padding:0;
-    box-sizing:border-box;
-    font-family:Poppins}
+        body {
+            background: var(--bg-gray);
+            color: var(--text-dark);
+            display: flex;
+            height: 100vh;
+            overflow: hidden;
+            transition: background 0.3s, color 0.3s;
+        }
 
-body{
-    font-family: 'Poppins', sans-serif;
-  overflow-x: hidden;
-height: 100vh;
-    display: flex;
-    overflow: hidden;
-    background: var(--bg-gray);
-}
+        /* --- MOBILE NAV TOGGLE --- */
+        .mobile-header {
+            display: none;
+            background: var(--admin-primary);
+            color: white;
+            padding: 15px 20px;
+            justify-content: space-between;
+            align-items: center;
+            position: fixed;
+            top: 0; width: 100%; z-index: 1001;
+        }
 
+        .menu-toggle { font-size: 24px; cursor: pointer; }
 
+        aside {
+            width: 260px;
+            background: var(--admin-primary);
+            padding: 30px 20px;
+            display: flex;
+            flex-direction: column;
+            color: white;
+            box-shadow: 4px 0 15px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease;
+            z-index: 1000;
+        }
 
-aside{
-width: 260px;
-    background: var(--admin-primary);
-    padding: 30px 20px;
-    display: flex;
-    flex-direction: column;
-    color: white;
-    box-shadow: 4px 0 15px rgba(0,0,0,0.1);
-}
+        .brand { font-size: 20px; font-weight: 700; margin-bottom: 40px; }
+        .nav-item {
+            padding: 15px; margin-bottom: 8px; border-radius: 8px;
+            cursor: pointer; color: #bdc3c7; font-weight: 500;
+            font-size: 14px; display: flex; align-items: center; gap: 12px;
+            transition: 0.3s ease;
+        }
+        .nav-item:hover, .nav-item.active { background: rgba(255,255,255,0.1); color: white; }
 
-.brand{font-size:20px;font-weight:700;margin-bottom:40px}
+        .admin-profile {
+            margin-top: auto; padding-top: 20px;
+            border-top: 1px solid rgba(255,255,255,0.15);
+            display: flex; align-items: center; gap: 10px;
+        }
 
-.nav-item{
-padding: 15px;
-    margin-bottom: 8px;
-    border-radius: 8px;
-    cursor: pointer;
-    color: #bdc3c7;
-    font-weight: 500;
-    font-size: 14px;
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    transition: 0.3s ease;
-}
+        .avatar {
+            width: 40px; height: 40px; background: white;
+            color: #2c3e50; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center; font-weight: 700;
+        }
 
-.nav-item:hover,.nav-item.active{
-background:rgba(255,255,255,0.1);
-color:white;
-}
+        main {
+            flex: 1;
+            padding: 30px;
+            overflow-y: auto;
+            position: relative;
+        }
 
-.admin-profile{
- margin-top: auto;
-    padding-top: 20px;
-    border-top: 1px solid rgba(255,255,255,0.15);
-    display: flex;
-    align-items: center;
-    gap: 10px;
-}
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            margin-bottom: 30px;
+        }
 
-.avatar{
-width: 40px;
-    height: 40px;
-    background: white;
-    color: var(--admin-primary);
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: 700;
-}
+        .stat-card {
+            background: var(--card-bg); padding: 25px; border-radius: 12px;
+            box-shadow: var(--shadow-card); display: flex; justify-content: space-between;
+        }
 
-/* ---------------- MAIN ---------------- */
+        .table-container {
+            background: var(--card-bg); border-radius: 12px;
+            box-shadow: var(--shadow-card); padding: 20px;
+            overflow-x: auto;
+        }
 
-main{
-flex:1;
-padding:30px;
-overflow-y:auto;
-}
+        table { width: 100%; border-collapse: collapse; min-width: 600px; }
+        th, td { padding: 15px; border-bottom: 1px solid var(--table-border); font-size: 14px; text-align: left; }
 
-.stats-grid{
-display:grid;
-grid-template-columns:repeat(2,1fr);
-gap:20px;
-margin-bottom:30px;
-}
+        .badge { padding: 6px 12px; border-radius: 20px; font-size: 10px; font-weight: 600; text-transform: uppercase; }
+        .badge-approved { background: #d4edda; color: #155724; }
+        .badge-rejected { background: #f8d7da; color: #721c24; }
+        .badge-pending { background: #fff3cd; color: #856404; }
 
-.stat-card{
-background:white;
-padding:25px;
-border-radius:12px;
-box-shadow:var(--shadow-card);
-display:flex;
-justify-content:space-between;
-}
+        .action-btn { padding: 8px 12px; border-radius: 6px; border: none; cursor: pointer; font-size: 11px; margin-bottom: 5px; }
+        .btn-view { background: #eee; color: #333; }
+        .btn-approve { background: var(--accent-green); color: white; }
+        .btn-reject { background: var(--accent-red); color: white; }
 
-.table-container{
-background:white;
-border-radius:12px;
-box-shadow:var(--shadow-card);
-padding:20px;
-}
+        .detail-row { display: none; background: rgba(0,0,0,0.05); }
+        body.dark-theme .detail-row { background: rgba(255,255,255,0.05); }
+        .detail-row.active { display: table-row; }
+        .detail-content { padding: 20px; display: grid; grid-template-columns: 150px 1fr; gap: 20px; }
+        .complaint-img { width: 100%; height: 120px; object-fit: cover; border-radius: 8px; }
 
-
-/* ---------------- TABLE ---------------- */
-
-table{width:100%;border-collapse:collapse;margin-top:15px}
-
-th,td{
-padding:15px;
-border-bottom:1px solid #ddd;
-font-size:14px;
-}
-
-.badge{
-padding:6px 14px;
-border-radius:20px;
-font-size:11px;
-font-weight:600;
-text-transform:uppercase;
-}
-
-.badge-approved{background:#d4edda;color:#155724}
-.badge-rejected{background:#f8d7da;color:#721c24}
-.badge-pending{background:#fff3cd;color:#856404}
-
-/* ---------------- BUTTONS ---------------- */
-
-.action-btn{
-padding:8px 16px;
-border-radius:6px;
-border:none;
-cursor:pointer;
-font-size:12px;
-margin-right:5px;
-transition:.2s;
-}
-
-.btn-view{background:#eee}
-.btn-approve{background:var(--accent-green);color:white}
-.btn-reject{background:var(--accent-red);color:white}
-
-.btn-approve:hover{background:#219150}
-.btn-reject:hover{background:#a93226}
-
-/* FREEZE */
-
-.processed .btn-approve,
-.processed .btn-reject{
-opacity:.45;
-pointer-events:none;
-}
-
-/* DETAILS */
-
-.detail-row{display:none;background:#f8f9fa}
-.detail-row.active{display:table-row}
-
-.detail-content{
-padding:20px;
-display:grid;
-grid-template-columns:200px 1fr;
-gap:20px;
-}
-
-.complaint-img{
-width:100%;
-height:150px;
-object-fit:cover;
-border-radius:8px;
-}
-
-.lang-box{
-position:fixed;
-top:15px;
-right:25px;
-z-index:999;
-}
-
-.lang-box select{
-padding:6px 14px;
-border-radius:20px;
-border:1px solid #ddd;
-font-weight:600;
-cursor:pointer;
-}
-
-
-</style>
+        @media (max-width: 768px) {
+            body { flex-direction: column; overflow-y: auto; }
+            aside { position: fixed; left: -260px; top: 0; height: 100%; transition: 0.3s; }
+            aside.open { left: 0; }
+            .mobile-header { display: flex; }
+            main { padding: 80px 15px 20px 15px; }
+            .stats-grid { grid-template-columns: 1fr; }
+            .detail-content { grid-template-columns: 1fr; }
+            .overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 999; }
+            .overlay.active { display: block; }
+        }
+    </style>
 </head>
 
 <body>
 
-<div class="lang-box">
-  <select id="languageSelect">
-    <option value="en">English</option>
-    <option value="hi">हिंदी</option>
-    <option value="mr">मराठी</option>
-  </select>
+<div class="mobile-header">
+    <div class="brand translatable" style="margin-bottom: 0;">🛡️ Admin</div>
+    <div class="menu-toggle" onclick="toggleMenu()">☰</div>
 </div>
 
-<aside>
-<div class="brand">🛡️ Admin Portal</div>
+<div class="overlay" onclick="toggleMenu()"></div>
 
-<ul>
-<li class="nav-item active">Dashboard</li>
-<li class="nav-item">Manage Complaints</li>
-<li class="nav-item" onclick="window.location.href='AdminSettings.html' ">Settings</li>
-</ul>
+<aside id="sidebar">
+    <div class="brand translatable">🛡️ Admin Portal</div>
+    <ul>
+        <li class="nav-item active translatable">Dashboard</li>
+        <li class="nav-item translatable" onclick="window.location.href='ManageComplaint.html'">Manage Complaints</li>
+        <li class="nav-item translatable" onclick="window.location.href='AdminSettings.html' ">Settings</li>
+    </ul>
 
-<div class="admin-profile">
-<div class="avatar">A</div>
-<div>
-<div style="font-size: 14px; font-weight: 600;">System Admin</div>
-<div style="font-size: 12px; color: #bdc3c7;">Municipal Corp.</div>
-</div>
-</div>
+    <div class="admin-profile">
+        <div class="avatar">A</div>
+        <div>
+            <div style="font-size: 14px; font-weight: 600;">System Admin</div>
+            <div class="translatable" style="font-size: 12px; color: #bdc3c7;">Municipal Corp.</div>
+        </div>
+    </div>
 </aside>
 
 <main>
+    <h2 class="translatable">Dashboard Overview</h2>
+    <p class="translatable" style="color:var(--text-light);margin-bottom:20px">Review and process complaints.</p>
 
-<h2>Dashboard Overview</h2>
-<p style="color:#777;margin-bottom:20px">Review and process complaints.</p>
+    <div class="stats-grid">
+        <div class="stat-card">
+            <div><h3 id="count-pending">0</h3><p class="translatable">Pending</p></div>
+            <span>⏳</span>
+        </div>
+        <div class="stat-card">
+            <div><h3 id="count-rejected">0</h3><p class="translatable">Rejected</p></div>
+            <span>🚫</span>
+        </div>
+    </div>
 
-<div class="stats-grid">
-<div class="stat-card">
-<div>
-<h3 id="count-pending">0</h3>
-<p>Pending Reviews</p>
-</div>
-<span>⏳</span>
-</div>
-
-<div class="stat-card">
-<div>
-<h3 id="count-rejected">0</h3>
-<p>Rejected</p>
-</div>
-<span>🚫</span>
-</div>
-</div>
-
-<div class="table-container">
-<h3>Recent Complaints</h3>
-<table>
-<thead>
-<tr>
-<th>ID</th>
-<th>Department</th>
-<th>Area</th>
-<th>Date</th>
-<th>Status</th>
-<th>Actions</th>
-</tr>
-</thead>
-
-<tbody id="complaintTableBody"></tbody>
-
-</table>
-</div>
-
+    <div class="table-container">
+        <h3 class="translatable">Recent Complaints (Pending)</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th class="translatable">ID</th>
+                    <th class="translatable">Dept</th>
+                    <th class="translatable">Area</th>
+                    <th class="translatable">Status</th>
+                    <th class="translatable">Actions</th>
+                </tr>
+            </thead>
+            <tbody id="complaintTableBody"></tbody>
+        </table>
+    </div>
 </main>
 
 <script>
-
-/* ---------------- AUTH ---------------- */
-
-const token = localStorage.getItem("adminToken");
-
-if(!token){
-alert("Unauthorized");
-location.href="index.html";
+// --- THEME CHECK ---
+if (localStorage.getItem('admin_darkMode') === 'true') {
+    document.body.classList.add('dark-theme');
 }
 
-/* ---------------- LOAD ---------------- */
+function toggleMenu() {
+    document.getElementById('sidebar').classList.toggle('open');
+    document.querySelector('.overlay').classList.toggle('active');
+}
+
+const token = localStorage.getItem("adminToken");
+if(!token){
+    alert("Unauthorized");
+    location.href="index.html";
+}
 
 const tbody = document.getElementById("complaintTableBody");
 const pendingEl = document.getElementById("count-pending");
 const rejectedEl = document.getElementById("count-rejected");
 
 async function loadComplaints(){
+    try {
+        const res = await fetch("https://mycityconnect-dgxu.onrender.com/api/admin/complaints", {
+            headers:{ Authorization:"Bearer "+token }
+        });
 
-const res = await fetch(
-"https://mycityconnect-dgxu.onrender.com/api/admin/complaints",
-{
-headers:{ Authorization:"Bearer "+token }
-});
+        if(!res.ok){
+            localStorage.removeItem("adminToken");
+            location.href="index.html";
+            return;
+        }
 
-if(!res.ok){
-alert("Session expired. Login again.");
-localStorage.removeItem("adminToken");
-location.href="index.html";
-return;
+        const data = await res.json();
+        tbody.innerHTML="";
+        
+        let pending = 0;
+        let rejected = 0;
+
+        data.forEach(c => {
+            if(c.status==="pending") pending++;
+            if(c.status==="rejected") rejected++;
+        });
+
+        pendingEl.textContent = pending;
+        rejectedEl.textContent = rejected;
+
+        const pendingComplaints = data.filter(c => c.status === "pending");
+
+        if (pendingComplaints.length === 0) {
+            tbody.innerHTML = `<tr><td colspan="5" style="text-align:center">No pending complaints.</td></tr>`;
+        }
+
+        pendingComplaints.forEach(c => {
+            const badgeClass = "badge-pending";
+            const id = c._id;
+
+            tbody.innerHTML += `
+                <tr id="row-${id}">
+                    <td>${id.slice(-4)}</td>
+                    <td class="translatable">${c.department}</td>
+                    <td class="translatable">${c.area}</td>
+                    <td><span class="badge ${badgeClass} translatable">${c.status}</span></td>
+                    <td>
+                        <button class="action-btn btn-view translatable" onclick="toggleDetails('${id}')">View</button>
+                        <button class="action-btn btn-approve" onclick="updateStatus('${id}','approved')">✔</button>
+                        <button class="action-btn btn-reject" onclick="updateStatus('${id}','rejected')">✖</button>
+                    </td>
+                </tr>
+                <tr class="detail-row" id="detail-${id}">
+                    <td colspan="5">
+                        <div class="detail-content">
+                            <img class="complaint-img" src="https://mycityconnect-dgxu.onrender.com/uploads/${c.image || "noimg.png"}">
+                            <div>
+                                <p><b>User:</b> ${c.name || "N/A"}</p>
+                                <p><b>Desc:</b> <span class="translatable">${c.description}</span></p>
+                                <button class="action-btn btn-reject translatable" style="margin-top:10px" onclick="updateStatus('${id}','rejected')">Reject Complaint</button>
+                            </div>
+                        </div>
+                    </td>
+                </tr>`;
+        });
+        
+        const saved = localStorage.getItem("lang") || "en";
+        if (saved !== "en") translatePage(saved);
+
+    } catch (e) { console.log(e); }
 }
-
-const data = await res.json();
-
-
-tbody.innerHTML="";
-
-let pending=0,rejected=0;
-
-data.forEach(c=>{
-
-if(c.status==="pending") pending++;
-if(c.status==="rejected") rejected++;
-
-const isProcessed = c.status !== "pending";
-
-const badgeClass =
-c.status==="approved" ? "badge-approved" :
-c.status==="rejected" ? "badge-rejected" :
-"badge-pending";
-
-const id = c._id;
-
-tbody.innerHTML += `
-
-<tr class="main-row ${isProcessed?"processed":""}" id="row-${id}">
-<td>${id.slice(-6)}</td>
-<td>${c.department}</td>
-<td>${c.area}</td>
-<td>${new Date(c.createdAt).toLocaleDateString()}</td>
-
-<td>
-<span class="badge ${badgeClass}">
-${c.status}
-</span>
-</td>
-
-<td>
-
-<button class="action-btn btn-view"
-onclick="toggleDetails('${id}')">View Details</button>
-
-<button class="action-btn btn-approve"
-${isProcessed?"disabled":""}
-onclick="updateStatus('${id}','approved')">
-Approve</button>
-
-<button class="action-btn btn-reject"
-${isProcessed?"disabled":""}
-onclick="updateStatus('${id}','rejected')">
-Reject</button>
-
-</td>
-</tr>
-
-<tr class="detail-row" id="detail-${id}">
-<td colspan="6">
-
-<div class="detail-content">
-
-<img class="complaint-img"
-src="https://mycityconnect-dgxu.onrender.com/uploads/${c.image || "noimg.png"}">
-
-<div>
-<p><b>Name:</b> ${c.name}</p>
-<p><b>Mobile:</b> ${c.mobile}</p>
-<p><b>Description:</b> ${c.description}</p>
-</div>
-
-</div>
-
-</td>
-</tr>
-
-`;
-
-});
-
-pendingEl.textContent=pending;
-rejectedEl.textContent=rejected;
-}
-
-/* ---------------- UPDATE ---------------- */
 
 async function updateStatus(id,status){
-
-const row=document.getElementById("row-"+id);
-
-row.classList.add("processed");
-
-row.querySelectorAll(".btn-approve,.btn-reject")
-.forEach(btn=>btn.disabled=true);
-
-await fetch("https://mycityconnect-dgxu.onrender.com/api/admin/complaint/"+id,{
-method:"PUT",
-headers:{
-"Content-Type":"application/json",
-Authorization:"Bearer "+token
-},
-body:JSON.stringify({status})
-});
-
-loadComplaints();
+    if(!confirm(`Are you sure you want to mark this as ${status}?`)) return;
+    try {
+        const res = await fetch("https://mycityconnect-dgxu.onrender.com/api/admin/complaint/"+id,{
+            method:"PUT",
+            headers:{"Content-Type":"application/json", Authorization:"Bearer "+token},
+            body:JSON.stringify({status})
+        });
+        
+        if(res.ok) {
+            loadComplaints();
+        } else {
+            alert("Failed to update status");
+        }
+    } catch (err) {
+        console.error(err);
+    }
 }
-
-/* ---------------- DETAILS ---------------- */
 
 function toggleDetails(id){
-
-const detail=document.getElementById("detail-"+id);
-
-document.querySelectorAll(".detail-row")
-.forEach(r=>r.classList.remove("active"));
-
-detail.classList.toggle("active");
+    const detail=document.getElementById("detail-"+id);
+    const isActive = detail.classList.contains('active');
+    document.querySelectorAll(".detail-row").forEach(r=>r.classList.remove("active"));
+    if(!isActive) detail.classList.add("active");
 }
 
-/* ---------------- LOGOUT ---------------- */
-
-function logoutUser(){
-localStorage.removeItem("adminToken");
-alert("Logged out");
-location.href="index.html";
+/* --- AUTO-TRANSLATION ENGINE --- */
+async function translateText(text, target) {
+    try {
+        const url = `https://translate.googleapis.com/translate_a/single?client=gtx&sl=en&tl=${target}&dt=t&q=${encodeURIComponent(text)}`;
+        const res = await fetch(url);
+        const data = await res.json();
+        return data[0][0][0];
+    } catch (err) { return text; }
 }
 
-loadComplaints();
-
-/* ================= GOOGLE TRANSLATE SYSTEM ================= */
+async function translatePage(lang) {
+    const elements = document.querySelectorAll(".translatable");
+    for (const el of elements) {
+        const original = el.dataset.original || el.innerText;
+        el.dataset.original = original;
+        if (lang === "en") {
+            el.innerText = original;
+        } else {
+            el.innerText = await translateText(original, lang);
+        }
+    }
+}
 
 document.addEventListener("DOMContentLoaded", () => {
-
-  const selector = document.getElementById("languageSelect");
-
-  async function translateText(text, target) {
-    try {
-      const url =
-        "https://translate.googleapis.com/translate_a/single" +
-        "?client=gtx" +
-        "&sl=en" +
-        "&tl=" + target +
-        "&dt=t&q=" + encodeURIComponent(text);
-
-      const res = await fetch(url);
-      const data = await res.json();
-
-      return data[0][0][0];
-
-    } catch (err) {
-      console.error("Translate error:", err);
-      return text;
-    }
-  }
-
-  /* ===== TEXT ELEMENTS ===== */
-
-  const textSelectors = [
-    ".brand",
-    "main h2",
-    "main p",
-    ".stat-card p",
-    ".table-container h3",
-    ".nav-item",
-    ".admin-profile div div",
-    "th",
-    ".btn-view",
-    ".btn-approve",
-    ".btn-reject"
-  ];
-
-  async function translatePage(lang) {
-
-    const elements = document.querySelectorAll(
-      textSelectors.join(",")
-    );
-
-    for (const el of elements) {
-
-      const original =
-        el.dataset.original || el.innerText;
-
-      el.dataset.original = original;
-
-      el.innerText =
-        lang === "en"
-          ? original
-          : await translateText(original, lang);
-    }
-
-    localStorage.setItem("lang", lang);
-  }
-
-  /* ===== LOAD SAVED ===== */
-
-  const saved = localStorage.getItem("lang") || "en";
-  selector.value = saved;
-
-  if (saved !== "en") translatePage(saved);
-
-  selector.addEventListener("change", e => {
-    translatePage(e.target.value);
-  });
-
+    loadComplaints();
+    const saved = localStorage.getItem("lang") || "en";
+    if (saved !== "en") translatePage(saved);
 });
-
 </script>
 
 </body>
