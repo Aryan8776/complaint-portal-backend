@@ -1,6 +1,6 @@
 const Admin = require("../models/Admin");
 const User = require("../models/User");
-const bcrypt = require("bcryptjs");
+const bcrypt = require("../../node_modules/bcryptjs/umd");
 const generateToken = require("../utils/generateToken");
 
 exports.registerUser = async (req, res) => {
